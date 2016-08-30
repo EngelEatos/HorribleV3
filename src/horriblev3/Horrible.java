@@ -5,7 +5,9 @@ import horriblev3.help_classes.Row;
 import horriblev3.help_classes.Anime;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -13,6 +15,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -241,26 +244,48 @@ public class Horrible {
          
     private static int download(String path, String link, GUI gui) throws LoginFailedException{
         String linkid = regex("\\/file\\/(.*?)$", link);
-        Uploaded up = new Uploaded("4577498", "pandora");
-        UPDownload dl = up.factoryDownload(path, linkid);
-        dl.addUPDownloadProgressListener((UPDownload upDownload) -> {
-            double percent = ((100.0 / upDownload.getContentLength()) * upDownload.getProgressByte());
-            DecimalFormat df = new DecimalFormat("#.##");
-            updateProgress(gui, String.valueOf(df.format(percent) + " %"));
-        });
-        try {
-            dl.start();
-            
-        } catch (DownloadFailedException ex){
-            //JOptionPane.showMessageDialog(null, ex.getMessage(), "Error: " + ex.getClass(), JOptionPane.ERROR_MESSAGE);
-            updateStatus(gui, ex.getMessage());
-            updateProgress(gui, " - ");
+        List<String> acc = loadAccount();
+        if(acc != null && acc.size() == 2){
+            Uploaded up = new Uploaded(acc.get(0), acc.get(1));
+            UPDownload dl = up.factoryDownload(path, linkid);
+            dl.addUPDownloadProgressListener((UPDownload upDownload) -> {
+                double percent = ((100.0 / upDownload.getContentLength()) * upDownload.getProgressByte());
+                DecimalFormat df = new DecimalFormat("#.##");
+                updateProgress(gui, String.valueOf(df.format(percent) + " %"));
+            });
+            try {
+                dl.start();
+
+            } catch (DownloadFailedException ex){
+                //JOptionPane.showMessageDialog(null, ex.getMessage(), "Error: " + ex.getClass(), JOptionPane.ERROR_MESSAGE);
+                updateStatus(gui, ex.getMessage());
+                updateProgress(gui, " - ");
+                return -1;
+            }
+            updateStatus(gui, "Finished Download");
+            return 0;
+        } else {
             return -1;
-        }
-        updateStatus(gui, "Finished Download");
-        return 0;
+        }  
     } 
-    
+ 
+    private static List<String> loadAccount(){
+        Properties prop = new Properties();
+        List<String> result = new ArrayList<>();
+        //InputStream input = null;
+        String path = System.getProperty("user.dir") + "/src/horriblev3/account.file";
+        if(new File(path).exists()){
+            try(InputStream input = new FileInputStream(path)){
+                prop.load(input);
+                result.add(prop.getProperty("user"));
+                result.add(prop.getProperty("password"));
+            } catch (IOException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        
+        return result;
+    }
 // Remove Everthing but not 1080p  
     
     private static List<Element> removeShit(Elements e){
