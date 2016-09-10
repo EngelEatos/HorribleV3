@@ -54,6 +54,7 @@ public class Horrible {
      * @param args the command line arguments
      * @throws java.io.IOException
      * @throws to.uploaded.exception.LoginFailedException
+     * @throws java.text.ParseException
      */
     
     public static void main(String[] args) throws IOException, LoginFailedException, ParseException {
