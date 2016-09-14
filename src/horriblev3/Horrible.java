@@ -19,8 +19,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
@@ -79,6 +77,7 @@ public class Horrible {
     }
     
     private static void _init(GUI gui) throws IOException{
+        gui.setStateBtnStart(false);
         gui.clearTable();
         count = 0;
         animes.clear();
@@ -89,7 +88,8 @@ public class Horrible {
             collectAnimes(url + i, cookies);   
         }
         //Collections.sort(animes, comparator);
-        output(gui); 
+        output(gui);
+        gui.setStateBtnStart(true);
     }
     
     
@@ -179,7 +179,7 @@ public class Horrible {
                             try {
                                 _init(gui);
                             } catch (IOException ex) {
-                                Logger.getLogger(Horrible.class.getName()).log(Level.SEVERE, null, ex);
+                                System.out.println(ex.getMessage());
                             }
                         }
                     }
@@ -319,7 +319,7 @@ public class Horrible {
             try {
                 Files.createDirectory(tmp);
             } catch (IOException ex) {
-                Logger.getLogger(Horrible.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
             }
         }
     }
