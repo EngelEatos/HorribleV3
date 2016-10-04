@@ -3,6 +3,7 @@ package horriblev3;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpCookie;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import to.uploaded.exception.LoginFailedException;
  * @author EngelEatos
  */
 public class Collector  {
-    private Set<Cookie> cookies;
+    private List<HttpCookie> cookies;
     private List<Anime> animes = new ArrayList<>();
     private String downloadDir = "D:\\Horrible\\";
     int count = 0;
@@ -67,7 +68,7 @@ public class Collector  {
         return !(new File(Path + "[HorribleSubs] " + file).exists() || new File(Path + "[HorribleSubs]_" + file.replace(" ", "_")).exists());
     }
         
-    private void collectAnimes(String url, Set<Cookie> cookies) throws IOException{
+    private void collectAnimes(String url, List<HttpCookie> cookies) throws IOException{
         Document doc = new Parser().request(url, cookies);
        
         if(doc == null) { return; }

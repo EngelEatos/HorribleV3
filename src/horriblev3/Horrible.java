@@ -3,11 +3,11 @@ package horriblev3;
 
 import horriblev3.help_classes.Row;
 import horriblev3.help_classes.Anime;
-import com.gargoylesoftware.htmlunit.util.Cookie;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpCookie;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -43,9 +42,8 @@ public class Horrible {
     private static List<Anime> animes = new ArrayList<>();
     private static List<String> animeConfig = new ArrayList<>();
     private static int count = 0;
-    private static Set<Cookie> cookies;
     private static String downloadDir = "D:\\Horrible\\";
-
+    private static List<HttpCookie> cookies = null;
 //MAIN-FUNCTIONS
     
     /**
@@ -54,7 +52,6 @@ public class Horrible {
      * @throws to.uploaded.exception.LoginFailedException
      * @throws java.text.ParseException
      */
-    
     public static void main(String[] args) throws IOException, LoginFailedException, ParseException {
         GUI gui = new GUI();
         //disable btns
@@ -80,7 +77,7 @@ public class Horrible {
         gui.setStateBtnStart(false);
         gui.clearTable();
         count = 0;
-        animes.clear();
+        animes.clear();       
         String url = "http://horriblesubs.info/lib/latest.php?nextid=";
         int end = 15;
         for(int i=0; i <= end; i++){
@@ -93,7 +90,7 @@ public class Horrible {
     }
     
     
-    private static void collectAnimes(String url, Set<Cookie> cookies) throws IOException{
+    private static void collectAnimes(String url, List<HttpCookie> cookies) throws IOException{
         Document doc = new Parser().request(url, cookies);
        
         if(doc == null) { return; }

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -43,13 +44,13 @@ import org.w3c.css.sac.ErrorHandler;
  * @author EngelEatos
  */
 public class Parser {
-    public Document request(String url, Set<Cookie> cookies) throws IOException{
+    public Document request(String url, List<HttpCookie> cookies) throws IOException{
         try {
             Document result = null;
 
             Connection con = Jsoup.connect(url)
                .ignoreContentType(true)
-               .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0")
+               .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:48.0) Gecko/20100101 Firefox/48.0")
                .header("Host", "horriblesubs.info")
                .header("Accept", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                .header("Accept-Language", "de,en-US;q=0.7,en;q=0.3")
@@ -81,43 +82,15 @@ public class Parser {
         });
         return list;
     }
-    private Connection setCookies(Set<Cookie> cookies, Connection con){
-        Iterator<Cookie> i = cookies.iterator();
-        
-        while(i.hasNext()){
-            Cookie c = i.next();
-            con.cookie(c.getName(), c.getValue());
-        }
+    private Connection setCookies(List<HttpCookie> cookies, Connection con){
+        cookies.stream().forEach((cookie) -> {
+            con.cookie(cookie.getName(), cookie.getValue());
+        });
         return con;
     }
-    public Set<Cookie> getCookies(GUI gui) throws IOException, ParseException{
-        String UserDir = System.getProperty("user.dir");
-        File config = new File(UserDir + "/src/horriblev3/cookie.file");
-        File date = new File(UserDir + "/src/horriblev3/date.file");
-        
-        if(config.exists() && date.exists()){
-            if(expired(date)){
-                gui.setStatus("Status: loading cookies");
-                Set<Cookie> cookies = null;
-                try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(config))) {
-                    cookies = (Set<Cookie>) in.readObject();
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                if(cookies != null){
-                    return cookies;
-                } else {
-                    return null;
-                }
-            }
-        }
-        gui.setStatus("Status: create new Cookies");
-        Set<Cookie> cookies = rq();
-        if(cookies != null){
-            return cookies;
-        } else {
-            return null;
-        }
+    public List<HttpCookie> getCookies(GUI gui) throws IOException, ParseException{
+        Cloudflare cf = new Cloudflare("http://horriblesubs.info/");
+        return cf.scrape();
         
     }
     

@@ -2,6 +2,8 @@ package horriblev3;
 
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import java.io.IOException;
+import java.net.HttpCookie;
+import java.util.List;
 import java.util.Set;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,9 +14,9 @@ import org.jsoup.select.Elements;
  * @author EngelEatos
  */
 public class ConfigCreator {
-    private final Set<Cookie> cookies;
+    private final List<HttpCookie> cookies;
     
-    public ConfigCreator(Set<Cookie> cookies) {
+    public ConfigCreator(List<HttpCookie> cookies) {
         this.cookies = cookies;
     }
     

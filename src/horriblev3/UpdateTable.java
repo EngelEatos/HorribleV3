@@ -276,7 +276,6 @@ public class UpdateTable {
             });
 
         }
-
         @Override
         protected File doInBackground() throws Exception {
             return null;
